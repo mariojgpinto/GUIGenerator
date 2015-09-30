@@ -231,6 +231,10 @@ public class GUIGenerator : MonoBehaviour {
 		string classContent = "";
 
 		classContent += GUIGenerator_Macros.text_includes;
+
+		classContent += GUIGenerator_Macros.text_classEventButton;
+		classContent += GUIGenerator_Macros.text_classEventToggle;
+
 		classContent += GUIGenerator_Macros.text_classDeclaration.Replace(GUIGenerator_Macros.replacement_name, className);
 
 		classContent += GUIGenerator_Macros.text_regionBegin.Replace(GUIGenerator_Macros.replacement_name, GUIGenerator_Macros.text_regionMacro_Variables);
@@ -242,6 +246,29 @@ public class GUIGenerator : MonoBehaviour {
 			classContent += GUIGenerator_Macros.text_gameObjectVariable.Replace(GUIGenerator_Macros.replacement_name,list[i].classInstanceName);
 		}
 
+		classContent += "\n";
+
+		for(int i = 0 ; i < list.Count; ++i){
+			bool hasVariables = false;
+			if(list[i].HasButtons()){
+				classContent += GUIGenerator_Macros.text_buttonEventHandlerVariable.
+					Replace(GUIGenerator_Macros.replacement_type,GUIGenerator_Macros.text_classEventButtonName).
+					Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
+
+				hasVariables = true;
+			}
+
+			if(list[i].HasToggle()){
+				classContent += GUIGenerator_Macros.text_toggleEventHandlerVariable.
+					Replace(GUIGenerator_Macros.replacement_type,GUIGenerator_Macros.text_classEventToggleName).
+					Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
+
+				hasVariables = true;
+			}
+
+			if(hasVariables)
+				classContent += "\n";
+		}
 
 		classContent += GUIGenerator_Macros.text_regionEnd;
 		classContent += "\n";
@@ -256,6 +283,14 @@ public class GUIGenerator : MonoBehaviour {
 
 		//INITIALIZE LISTENERS
 		CreateFunctionInitializeListeners(list, ref classContent);
+
+		//EVENT BUTTON FUNCTION
+		classContent += GUIGenerator_Macros.text_function_OnButtonPressed;
+		classContent += "\n";
+
+		//EVENT TOGGLE FUNCTION
+		classContent += GUIGenerator_Macros.text_function_OnTogglePressed;
+
 
 		classContent += GUIGenerator_Macros.text_regionEnd;
 		classContent += "\n";
@@ -359,6 +394,7 @@ public class GUIGenerator : MonoBehaviour {
 		}
 
 		classContent += GUIGenerator_Macros.text_function_End;
+		classContent += "\n";
 	}
 
 	void CreateFunctionCallbacks(List<GUIGenerator_Elem_Base> list, ref string classContent){
@@ -375,10 +411,14 @@ public class GUIGenerator : MonoBehaviour {
 
 				int ac = 0;
 				for(int j = 0 ; j < listButtons.Count; ++j){
+					string eventVariable = GUIGenerator_Macros.text_buttonEventHandlerVariableName.
+						Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
+
 					classContent += GUIGenerator_Macros.text_function_OnButtonCallback_Case.
 							Replace(GUIGenerator_Macros.replacement_variable, "" + ac++).
 							Replace(GUIGenerator_Macros.replacement_variableParent, list[i].name.ToUpper()).
-							Replace(GUIGenerator_Macros.replacement_name, listButtons[j].name.ToUpper());
+							Replace(GUIGenerator_Macros.replacement_name, listButtons[j].name.ToUpper()).
+							Replace(GUIGenerator_Macros.replacement_variable2, eventVariable);
 				}
 
 				classContent += GUIGenerator_Macros.text_function_OnButtonCallback_SwitchEnd;
@@ -399,10 +439,14 @@ public class GUIGenerator : MonoBehaviour {
 				
 				int ac = 0;
 				for(int j = 0 ; j < listToggles.Count; ++j){
+					string eventVariable = GUIGenerator_Macros.text_toggleEventHandlerVariableName.
+						Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
+
 					classContent += GUIGenerator_Macros.text_function_OnToggleCallback_Case.
 						Replace(GUIGenerator_Macros.replacement_variable, "" + ac++).
 							Replace(GUIGenerator_Macros.replacement_variableParent, list[i].name.ToUpper()).
-							Replace(GUIGenerator_Macros.replacement_name, listToggles[j].name.ToUpper());
+							Replace(GUIGenerator_Macros.replacement_name, listToggles[j].name.ToUpper()).
+							Replace(GUIGenerator_Macros.replacement_variable2, eventVariable);
 				}
 				
 				classContent += GUIGenerator_Macros.text_function_OnToggleCallback_SwitchEnd;
@@ -492,11 +536,50 @@ public class GUIGenerator : MonoBehaviour {
 	#endregion
 
 	#region RUN
+	public List<string> ExistingFiles(){
+		CreatePaths();
+
+		List<string> files = new List<string>();
+
+		List<GUIGenerator_Elem_Base> list = new List<GUIGenerator_Elem_Base>();
+		
+		GetAllComponents(this.gameObject, ref list, null);
+		
+		//CHECK FOR REPEATED NAMES
+		FindAndResolveRepeatedElements(list);
+
+		//Create one file for each main panel
+		for(int i = 0 ; i < list.Count ; ++i){
+			list[i].className = GUIGenerator_Macros.text_classPrefix + list[i].name;
+
+			string classFile = directory_GUIScripts + list[i].className + GUIGenerator_Macros.file_end;
+
+			if(File.Exists(classFile)){
+				files.Add(list[i].className + GUIGenerator_Macros.file_end);
+			}
+		}
+
+		//ANIMATION FILE
+		string animationFile = directory_GUIScripts + GUIGenerator_Macros.text_classPrefix + GUIGenerator_Macros.file_animation + GUIGenerator_Macros.file_end;
+		if(File.Exists(animationFile)){
+			files.Add(GUIGenerator_Macros.file_animation + GUIGenerator_Macros.file_end);
+		}
+		//CONTROLLER FILE
+		string controllerFile = directory_GUIScripts + GUIGenerator_Macros.text_classPrefix + GUIGenerator_Macros.file_controller + GUIGenerator_Macros.file_end;
+		if(File.Exists(controllerFile)){
+			files.Add(GUIGenerator_Macros.file_controller + GUIGenerator_Macros.file_end);
+		}
+
+		return files;
+	}
+
 	public void GenerateFiles(){
 		CreatePaths();
 		CreateDirectories();
 		
 		CreateAll();
+
+		GUIGenerator_Elem_Base.idAc = 0;
 	}
 	#endregion
 }

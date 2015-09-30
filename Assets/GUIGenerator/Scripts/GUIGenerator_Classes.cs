@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GUIGenerator_Elem_Base {
-	static int idAc = 0;
+	public static int idAc = 0;
 
 	static int namelessCounter = 0;
 
@@ -214,5 +214,46 @@ public class GUIGenerator_Elem_Base {
 		for( int i = 0 ; i < this.children.Count ; ++i){
 			this.children[i].PrintElement(ref str, level +1);
 		} 
+	}
+
+	public bool HasButtons(){
+		return HasButtonsRecursive(this);
+	}
+
+	bool HasButtonsRecursive(GUIGenerator_Elem_Base elem){
+		if(elem.type == TYPE.BUTTON)
+			return true;
+
+		if(elem.children.Count > 0){
+			for(int i = 0 ; i < elem.children.Count ; ++i){
+				if(HasButtonsRecursive(elem.children[i])){
+					return true;
+				}
+			}
+			return false;
+		}
+		else
+			return false;
+	}
+
+
+	public bool HasToggle(){
+		return HasToggleRecursive(this);
+	}
+	
+	bool HasToggleRecursive(GUIGenerator_Elem_Base elem){
+		if(elem.type == TYPE.TOGGLE)
+			return true;
+		
+		if(elem.children.Count > 0){
+			for(int i = 0 ; i < elem.children.Count ; ++i){
+				if(HasToggleRecursive(elem.children[i])){
+					return true;
+				}
+			}
+			return false;
+		}
+		else
+			return false;
 	}
 }

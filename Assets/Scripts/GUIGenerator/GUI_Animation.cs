@@ -1,6 +1,7 @@
 using UnityEngine;
-using System.Collections;
+using System;
 using System.IO;
+using System.Collections;
 
 public class GUI_Animation : MonoBehaviour {
 	#region VARIABLES
