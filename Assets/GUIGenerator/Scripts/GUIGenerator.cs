@@ -298,7 +298,8 @@ public class GUIGenerator : MonoBehaviour {
 
 		classContent += GUIGenerator_Macros.text_regionBegin.Replace(GUIGenerator_Macros.replacement_name, GUIGenerator_Macros.text_regionMacro_Callbacks);
 		//LISTENERS CALLBACKS
-		CreateFunctionCallbacks(list, ref classContent);
+		CreateButtonCallbacks(list, ref classContent);
+		CreateToggleCallbacks(list, ref classContent);
 
 		classContent += GUIGenerator_Macros.text_regionEnd;
 		classContent += "\n";
@@ -313,6 +314,12 @@ public class GUIGenerator : MonoBehaviour {
 		classContent += "\n";
 		classContent += GUIGenerator_Macros.text_function_OnGUI_Commented;
 
+		classContent += GUIGenerator_Macros.text_regionEnd;		
+		classContent += "\n";
+
+		//COMMENTS
+		classContent += GUIGenerator_Macros.text_regionBegin.Replace(GUIGenerator_Macros.replacement_name, GUIGenerator_Macros.text_regionMacro_Comments);
+		CreateCommentsCallBacks(list, ref classContent);
 		classContent += GUIGenerator_Macros.text_regionEnd;
 
 
@@ -397,7 +404,7 @@ public class GUIGenerator : MonoBehaviour {
 		classContent += "\n";
 	}
 
-	void CreateFunctionCallbacks(List<GUIGenerator_Elem_Base> list, ref string classContent){
+	void CreateButtonCallbacks(List<GUIGenerator_Elem_Base> list, ref string classContent){
 		for(int i = 0 ; i < list.Count ; ++i){
 			List<GUIGenerator_Elem_Base> listButtons = new List<GUIGenerator_Elem_Base>();
 
@@ -405,20 +412,27 @@ public class GUIGenerator : MonoBehaviour {
 
 			if(listButtons.Count > 0){
 				classContent += GUIGenerator_Macros.text_function_OnButtonCallback_Header.
+					Replace(GUIGenerator_Macros.replacement_variable,list[i].className).
 					Replace(GUIGenerator_Macros.replacement_name, list[i].name);
-				
+
+				// SWITCH FUNCTION
 				classContent += GUIGenerator_Macros.text_function_OnButtonCallback_SwitchInit;
+
+				string eventVariable = GUIGenerator_Macros.text_buttonEventHandlerVariableName.
+					Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
 
 				int ac = 0;
 				for(int j = 0 ; j < listButtons.Count; ++j){
-					string eventVariable = GUIGenerator_Macros.text_buttonEventHandlerVariableName.
-						Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
+					string description = list[i].name.ToUpper() + " - BUTTON " + listButtons[j].name.ToUpper();
+					string function = GUIGenerator_Macros.text_function_OnButtonCallback_Call.
+										Replace(GUIGenerator_Macros.replacement_name, description).
+										Replace(GUIGenerator_Macros.replacement_variable, eventVariable);
 
 					classContent += GUIGenerator_Macros.text_function_OnButtonCallback_Case.
 							Replace(GUIGenerator_Macros.replacement_variable, "" + ac++).
 							Replace(GUIGenerator_Macros.replacement_variableParent, list[i].name.ToUpper()).
 							Replace(GUIGenerator_Macros.replacement_name, listButtons[j].name.ToUpper()).
-							Replace(GUIGenerator_Macros.replacement_variable2, eventVariable);
+							Replace(GUIGenerator_Macros.replacement_function, function);
 				}
 
 				classContent += GUIGenerator_Macros.text_function_OnButtonCallback_SwitchEnd;
@@ -426,27 +440,37 @@ public class GUIGenerator : MonoBehaviour {
 				classContent += GUIGenerator_Macros.text_function_End;
 				classContent += "\n";
 			}
+		}
+	}
 
+	void CreateToggleCallbacks(List<GUIGenerator_Elem_Base> list, ref string classContent){
+		for(int i = 0 ; i < list.Count ; ++i){			
 			List<GUIGenerator_Elem_Base> listToggles = new List<GUIGenerator_Elem_Base>();
-
+			
 			AggregateToggles(list[i].children, ref listToggles);
 			
 			if(listToggles.Count > 0){
 				classContent += GUIGenerator_Macros.text_function_OnToggleCallback_Header.
 					Replace(GUIGenerator_Macros.replacement_name, list[i].name);
 				
+				//SWITCH
 				classContent += GUIGenerator_Macros.text_function_OnToggleCallback_SwitchInit;
-				
+
+				string eventVariable = GUIGenerator_Macros.text_toggleEventHandlerVariableName.
+					Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
+
 				int ac = 0;
 				for(int j = 0 ; j < listToggles.Count; ++j){
-					string eventVariable = GUIGenerator_Macros.text_toggleEventHandlerVariableName.
-						Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
-
+					string description = list[i].name.ToUpper() + " - TOGGLE " + listToggles[j].name.ToUpper();
+					string function = GUIGenerator_Macros.text_function_OnToggleCallback_Call.
+						Replace(GUIGenerator_Macros.replacement_name, description).
+							Replace(GUIGenerator_Macros.replacement_variable, eventVariable);
+					
 					classContent += GUIGenerator_Macros.text_function_OnToggleCallback_Case.
 						Replace(GUIGenerator_Macros.replacement_variable, "" + ac++).
 							Replace(GUIGenerator_Macros.replacement_variableParent, list[i].name.ToUpper()).
 							Replace(GUIGenerator_Macros.replacement_name, listToggles[j].name.ToUpper()).
-							Replace(GUIGenerator_Macros.replacement_variable2, eventVariable);
+							Replace(GUIGenerator_Macros.replacement_function, function);
 				}
 				
 				classContent += GUIGenerator_Macros.text_function_OnToggleCallback_SwitchEnd;
@@ -455,6 +479,95 @@ public class GUIGenerator : MonoBehaviour {
 				classContent += "\n";
 			}
 		}
+	}
+
+	void CreateCommentsCallBacks(List<GUIGenerator_Elem_Base> list, ref string classContent){
+		for(int i = 0 ; i < list.Count ; ++i){
+		//BUTTONS
+			List<GUIGenerator_Elem_Base> listButtons = new List<GUIGenerator_Elem_Base>();			
+			AggregateButtons(list[i].children, ref listButtons);
+
+			if(listButtons.Count > 0){				
+				classContent += GUIGenerator_Macros.text_comment_OnButtonCallback_Header.
+					Replace(GUIGenerator_Macros.replacement_name,list[i].name);
+				
+				// SWITCH FUNCTION
+				classContent += GUIGenerator_Macros.text_comment_OnButtonCallback_SwitchInit;
+				
+				int ac = 0;
+				for(int j = 0 ; j < listButtons.Count; ++j){
+					classContent += GUIGenerator_Macros.text_comment_OnButtonCallback_Case.
+						Replace(GUIGenerator_Macros.replacement_variable, "" + ac++).
+							Replace(GUIGenerator_Macros.replacement_variableParent, list[i].name.ToUpper()).
+							Replace(GUIGenerator_Macros.replacement_name, listButtons[j].name.ToUpper());
+				}
+				
+				classContent += GUIGenerator_Macros.text_comment_OnButtonCallback_SwitchEnd;
+				
+				classContent += GUIGenerator_Macros.text_comment_End;
+				classContent += "\n";
+			}
+
+		//TOGGLES				
+			List<GUIGenerator_Elem_Base> listToggles = new List<GUIGenerator_Elem_Base>();			
+			AggregateToggles(list[i].children, ref listToggles);
+			
+			if(listToggles.Count > 0){
+				classContent += GUIGenerator_Macros.text_comment_OnToggleCallback_Header.
+					Replace(GUIGenerator_Macros.replacement_name,list[i].name);
+				
+				//SWITCH
+				classContent += GUIGenerator_Macros.text_comment_OnToggleCallback_SwitchInit;
+				
+				int ac = 0;
+				for(int j = 0 ; j < listToggles.Count; ++j){
+					classContent += GUIGenerator_Macros.text_comment_OnToggleCallback_Case.
+							Replace(GUIGenerator_Macros.replacement_variable, "" + ac++).
+							Replace(GUIGenerator_Macros.replacement_variableParent, list[i].name.ToUpper()).
+							Replace(GUIGenerator_Macros.replacement_name, listToggles[j].name.ToUpper());
+				}
+				
+				classContent += GUIGenerator_Macros.text_comment_OnToggleCallback_SwitchEnd;
+				
+				classContent += GUIGenerator_Macros.text_comment_End;
+				classContent += "\n";
+			}
+		}
+
+		//ASSIGN
+		classContent += GUIGenerator_Macros.text_comment_AssignEvents_Header;
+
+		for(int i = 0 ; i < list.Count ; ++i){		
+			List<GUIGenerator_Elem_Base> listButtons = new List<GUIGenerator_Elem_Base>();
+			AggregateButtons(list[i].children, ref listButtons);
+
+			string eventButtonVariable = GUIGenerator_Macros.text_buttonEventHandlerVariableName.
+				Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
+
+			if(listButtons.Count > 0){			
+				classContent += GUIGenerator_Macros.text_comment_OnButtonCallback_Assign.
+					Replace(GUIGenerator_Macros.replacement_variable,eventButtonVariable).
+						Replace(GUIGenerator_Macros.replacement_name,list[i].name);
+			}
+		}
+
+		classContent += "\n";
+
+		for(int i = 0 ; i < list.Count ; ++i){
+			List<GUIGenerator_Elem_Base> listToggles = new List<GUIGenerator_Elem_Base>();
+			AggregateToggles(list[i].children, ref listToggles);
+			
+			string eventToggleVariable = GUIGenerator_Macros.text_toggleEventHandlerVariableName.
+				Replace(GUIGenerator_Macros.replacement_variable,list[i].className);
+			
+			if(listToggles.Count > 0){
+				classContent += GUIGenerator_Macros.text_comment_OnToggleCallback_Assign.
+					Replace(GUIGenerator_Macros.replacement_variable,eventToggleVariable).
+						Replace(GUIGenerator_Macros.replacement_name,list[i].name);
+			}
+		}
+
+		classContent += GUIGenerator_Macros.text_comment_AssignEvents_End;
 	}
 
 	void AggregateButtons(List<GUIGenerator_Elem_Base> mainList, ref List<GUIGenerator_Elem_Base> listButtons){

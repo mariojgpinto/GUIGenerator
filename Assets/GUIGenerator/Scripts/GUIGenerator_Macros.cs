@@ -7,6 +7,7 @@ public static class GUIGenerator_Macros{
 	public static string replacement_variable2 = "V2V2V2V2V2V2";
 	public static string replacement_variable3 = "V3V3V3V3V3V3";
 	public static string replacement_variableParent = "PPPPPP";
+	public static string replacement_function = "FFFFFF";
 	#endregion
 
 	#region ELEMENTS
@@ -80,30 +81,34 @@ public static class GUIGenerator_Macros{
 	public static string text_regionMacro_Setup = "SETUP";
 	public static string text_regionMacro_Callbacks = "CALLBACKS";
 	public static string text_regionMacro_UnityCallbacks = "UNITY_CALLBACKS";
+	public static string text_regionMacro_Comments = "COMMENTS";
 
 
 	public static string text_regionBegin = "\t#region " + replacement_name + "\n";
 	public static string text_regionEnd = "\t#endregion\n";
 
 	public static string text_function_End = "\t}\n";
+	public static string text_comment_End = "//\t}\n";
 
 	public static string text_classEnd = "}\n";
 
 	#endregion
 
 	#region FILE_CONTROLLER
-	public static string file_controller = "Controller";
+	public static string file_controller = "MainController";
 
 	public static string text_classEventButtonName = "ButtonPressedEventArgs";
 	public static string text_classEventButton = "" +
 		"public class " + text_classEventButtonName + " : EventArgs {\n" + 
 		"\tpublic int id { get; set; }\n" + 
+		"\tpublic string description { get; set; }\n" + 
 		"}\n\n";
 
 	public static string text_classEventToggleName = "TogglePressedEventArgs";
 	public static string text_classEventToggle = "" +
 		"public class " + text_classEventToggleName + " : EventArgs {\n" + 
 		"\tpublic int id { get; set; }\n" + 
+		"\tpublic string description { get; set; }\n\n" + 
 		"\tpublic bool value { get; set; }\n" + 
 		"}\n\n";
 
@@ -130,48 +135,82 @@ public static class GUIGenerator_Macros{
 
 	public static string text_function_OnButtonPressedName = "OnButtonPressed";
 	public static string text_function_OnButtonPressed = "" + 
-		"\tprotected static void " + text_function_OnButtonPressedName + "(int id, EventHandler<" + text_classEventButtonName + "> handler){\n" + 
+		"\tprotected static void " + text_function_OnButtonPressedName + "(int id, string desc, EventHandler<" + text_classEventButtonName + "> handler){\n" + 
 		"\t\t" + text_classEventButtonName + " args = new " + text_classEventButtonName + "();\n" + 
-		"\t\targs.id = id;\n\n" + 		
+		"\t\targs.id = id;\n" + 		
+		"\t\targs.description = desc;\n\n" + 		
 		"\t\tif(handler != null){\n" + 
-		"\t\t\thandler(GUI_Controller.instance, args);\n" + 
+		"\t\t\thandler(" + text_classPrefix + file_controller + ".instance, args);\n" + 
 		"\t\t}\n" + 
 		"\t}\n";
 
 	public static string text_function_OnTogglePressedName = "OnTogglePressed";
 	public static string text_function_OnTogglePressed = "" + 
-		"\tprotected static void " + text_function_OnTogglePressedName + "(int id, bool value, EventHandler<" + text_classEventToggleName + "> handler){\n" + 
+		"\tprotected static void " + text_function_OnTogglePressedName + "(int id, string desc, bool value, EventHandler<" + text_classEventToggleName + "> handler){\n" + 
 			"\t\t" + text_classEventToggleName + " args = new " + text_classEventToggleName + "();\n" + 
-			"\t\targs.id = id;\n" + 		
+			"\t\targs.id = id;\n" + 	
+			"\t\targs.description = desc;\n\n" + 		
 			"\t\targs.value = value;\n\n" + 
 			"\t\tif(handler != null){\n" + 
-			"\t\t\thandler(GUI_Controller.instance, args);\n" + 
+			"\t\t\thandler(" + text_classPrefix + file_controller + ".instance, args);\n" + 
 			"\t\t}\n" + 
 			"\t}\n";
 
-	public static string text_function_OnButtonCallback_Prefix = "OnButton_" + replacement_name + "(" + replacement_variable + ")";
-	public static string text_function_OnButtonCallback_Header = "\tvoid OnButton_" + replacement_name + "(int id){\n";
+	public static string text_function_OnButtonCallback_Prefix = "Event_OnButton_" + replacement_name + "(" + replacement_variable + ")";
+	public static string text_function_OnButtonCallback_Header = "\tvoid Event_OnButton_" + replacement_name + "(int id){\n";
+	public static string text_function_OnButtonCallback_Call = text_function_OnButtonPressedName + "(id, \"" + replacement_name + "\"," + replacement_variable + ");";
 	public static string text_function_OnButtonCallback_SwitchInit = "\t\tswitch(id){\n";
-	public static string text_function_OnButtonCallback_Case = 	"\t\t\tcase " + replacement_variable + " : //" + replacement_variableParent + " - " + replacement_name + 
-																"\n\t\t\t\tDebug.Log(\"" + replacement_variableParent +  " - BUTTON " + replacement_name + "\");" + 
-																"\n\n\t\t\t\t" + text_function_OnButtonPressedName + "(id," + replacement_variable2 + ");" + 
-																"\n\n\t\t\t\tbreak;\n";
+	public static string text_function_OnButtonCallback_Case = 	
+		"\t\t\tcase " + replacement_variable + " : //" + replacement_variableParent + " - " + replacement_name + 
+		"\n\t\t\t\t" + replacement_function + 
+		"\n\t\t\t\tbreak;\n";
 	public static string text_function_OnButtonCallback_SwitchEnd = "\t\t\tdefault: break;\n\t\t}\n";
 
-	public static string text_function_OnToggleCallback_Prefix = "OnToggle_" + replacement_name + "("  + replacement_variable + ", value)";
-	public static string text_function_OnToggleCallback_Header = "\tvoid OnToggle_" + replacement_name + "(int id, bool value){\n";
+	public static string text_function_OnToggleCallback_Prefix = "Event_OnToggle_" + replacement_name + "("  + replacement_variable + ", value)";
+	public static string text_function_OnToggleCallback_Header = "\tvoid Event_OnToggle_" + replacement_name + "(int id, bool value){\n";
+	public static string text_function_OnToggleCallback_Call = text_function_OnTogglePressedName + "(id, \"" + replacement_name + "\", value," + replacement_variable + ");";
 	public static string text_function_OnToggleCallback_SwitchInit = "\t\tswitch(id){\n";
-	public static string text_function_OnToggleCallback_Case = 	"\t\t\tcase " + replacement_variable + " : //" + replacement_variableParent + " - " + replacement_name + 
-			"\n\t\t\t\tDebug.Log(\"" + replacement_variableParent +  " - TOGGLE " + replacement_name + " (\" + value + \")\");" + 
-			"\n\t\t\t\t" + 
-//			"\n\t\t\t\tif(value){" + 
-//			"\n\t\t\t\t\t" + 
-//			"\n\t\t\t\t} else{ "+ 
-//			"\n\t\t\t\t\t" + 
-//			"\n\t\t\t\t}" + 
-			"\n\t\t\t\t" + text_function_OnTogglePressedName + "(id, value," + replacement_variable2 + ");" + 
-			"\n\n\t\t\t\tbreak;\n";
+	public static string text_function_OnToggleCallback_Case = 	
+		"\t\t\tcase " + replacement_variable + " : //" + replacement_variableParent + " - " + replacement_name + 
+		"\n\t\t\t\t" + replacement_function + 
+		"\n\t\t\t\tbreak;\n";
 	public static string text_function_OnToggleCallback_SwitchEnd = "\t\t\tdefault: break;\n\t\t}\n";
+
+
+
+
+
+
+	public static string text_comment_OnButtonCallback_Header = "//\tvoid OnButton_" + replacement_name + "(object sender, ButtonPressedEventArgs e){\n";
+	public static string text_comment_OnButtonCallback_Call = text_function_OnButtonPressedName + "(id, \"" + replacement_name + "\"," + replacement_variable + ");";
+	public static string text_comment_OnButtonCallback_SwitchInit = "//\t\tswitch(e.id){\n";
+	public static string text_comment_OnButtonCallback_Case = 	
+		"//\t\t\tcase " + replacement_variable + " : //" + replacement_variableParent + " - " + replacement_name + "\n" + 
+			"//\t\t\t\tDebug.Log(e.id + \" - " + replacement_variableParent +  " - BUTTON " + replacement_name + "\");" + "\n\n" + 
+			"//\t\t\t\tbreak;\n";
+	public static string text_comment_OnButtonCallback_SwitchEnd = "//\t\t\tdefault: break;\n//\t\t}\n";
+
+
+	public static string text_comment_OnToggleCallback_Header = "//\tvoid OnToggle_" + replacement_name + "(object sender, TogglePressedEventArgs e){\n";
+	public static string text_comment_OnToggleCallback_SwitchInit = "//\t\tswitch(e.id){\n";
+	public static string text_comment_OnToggleCallback_Case = 	
+		"//\t\t\tcase " + replacement_variable + " : //" + replacement_variableParent + " - " + replacement_name + 
+		"\n//\t\t\t\tDebug.Log(e.id + \" - " + replacement_variableParent +  " - TOGGLE " + replacement_name + " (\" + e.value + \")\");" + 
+		"\n//\t\t\t\t" + 
+		"\n//\t\t\t\tif(e.value){" + 
+		"\n//\t\t\t\t\t" + 
+		"\n//\t\t\t\t} else{ "+ 
+		"\n//\t\t\t\t\t" + 
+		"\n//\t\t\t\t}" +
+		"\n\n//\t\t\t\tbreak;\n";
+	public static string text_comment_OnToggleCallback_SwitchEnd = "//\t\t\tdefault: break;\n//\t\t}\n";
+
+	public static string text_comment_AssignEvents_Header = "//\tvoid AssignEvents(){\n";
+	public static string text_comment_OnButtonCallback_Assign = "//\t\t" + text_classPrefix + file_controller + "." + replacement_variable + " += OnButton_" + replacement_name + ";\n";
+	public static string text_comment_OnToggleCallback_Assign = "//\t\t" + text_classPrefix + file_controller + "." + replacement_variable + " += OnToggle_" + replacement_name + ";\n";
+	public static string text_comment_AssignEvents_End = "//\t}\n";
+
+
 
 	public static string text_function_ControllerStart_Full = 
 			"\tvoid Awake(){\n" +

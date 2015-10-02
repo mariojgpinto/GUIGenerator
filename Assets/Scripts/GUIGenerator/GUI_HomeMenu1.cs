@@ -26,17 +26,17 @@ public class GUI_HomeMenu1 : MonoBehaviour {
 	public static GameObject				imageSlideShow_buttons_next_Button_gameObject;
 	public static UnityEngine.UI.Button		imageSlideShow_buttons_next_Button;
 
-	public static GameObject				imageSlideShow_buttons_next_text_Other_43_gameObject;
+	public static GameObject				imageSlideShow_buttons_next_text_Other_15_gameObject;
 
 	public static GameObject				imageSlideShow_buttons_previous_Button_gameObject;
 	public static UnityEngine.UI.Button		imageSlideShow_buttons_previous_Button;
 
-	public static GameObject				imageSlideShow_buttons_previous_text_Other_44_gameObject;
+	public static GameObject				imageSlideShow_buttons_previous_text_Other_16_gameObject;
 
 	public static GameObject				imageSlideShow_buttons_back_Button_gameObject;
 	public static UnityEngine.UI.Button		imageSlideShow_buttons_back_Button;
 
-	public static GameObject				imageSlideShow_buttons_back_text_Other_45_gameObject;
+	public static GameObject				imageSlideShow_buttons_back_text_Other_17_gameObject;
 
 	// INPUT ---------------------------------------------
 	public static GameObject				input_Panel_gameObject;
@@ -48,9 +48,9 @@ public class GUI_HomeMenu1 : MonoBehaviour {
 	public static GameObject				input_name_InputField_gameObject;
 	public static UnityEngine.UI.InputField	input_name_InputField;
 
-	public static GameObject				input_name_placeholder_Other_46_gameObject;
+	public static GameObject				input_name_placeholder_Other_18_gameObject;
 
-	public static GameObject				input_name_text_Other_47_gameObject;
+	public static GameObject				input_name_text_Other_19_gameObject;
 
 	public static GameObject				input_email_Text_gameObject;
 	public static UnityEngine.UI.Text		input_email_Text;
@@ -58,9 +58,9 @@ public class GUI_HomeMenu1 : MonoBehaviour {
 	public static GameObject				input_email_InputField_gameObject;
 	public static UnityEngine.UI.InputField	input_email_InputField;
 
-	public static GameObject				input_email_placeholder_Other_48_gameObject;
+	public static GameObject				input_email_placeholder_Other_20_gameObject;
 
-	public static GameObject				input_email_text_Other_49_gameObject;
+	public static GameObject				input_email_text_Other_21_gameObject;
 
 
 
@@ -83,17 +83,17 @@ public class GUI_HomeMenu1 : MonoBehaviour {
 		imageSlideShow_buttons_next_Button_gameObject = imageSlideShow_buttons_Panel_gameObject.transform.Find("Button_Next").gameObject;
 		imageSlideShow_buttons_next_Button = imageSlideShow_buttons_next_Button_gameObject.GetComponent<UnityEngine.UI.Button>();
 
-		imageSlideShow_buttons_next_text_Other_43_gameObject = imageSlideShow_buttons_next_Button_gameObject.transform.Find("Text").gameObject;
+		imageSlideShow_buttons_next_text_Other_15_gameObject = imageSlideShow_buttons_next_Button_gameObject.transform.Find("Text").gameObject;
 
 		imageSlideShow_buttons_previous_Button_gameObject = imageSlideShow_buttons_Panel_gameObject.transform.Find("Button_Previous").gameObject;
 		imageSlideShow_buttons_previous_Button = imageSlideShow_buttons_previous_Button_gameObject.GetComponent<UnityEngine.UI.Button>();
 
-		imageSlideShow_buttons_previous_text_Other_44_gameObject = imageSlideShow_buttons_previous_Button_gameObject.transform.Find("Text").gameObject;
+		imageSlideShow_buttons_previous_text_Other_16_gameObject = imageSlideShow_buttons_previous_Button_gameObject.transform.Find("Text").gameObject;
 
 		imageSlideShow_buttons_back_Button_gameObject = imageSlideShow_buttons_Panel_gameObject.transform.Find("Button_Back").gameObject;
 		imageSlideShow_buttons_back_Button = imageSlideShow_buttons_back_Button_gameObject.GetComponent<UnityEngine.UI.Button>();
 
-		imageSlideShow_buttons_back_text_Other_45_gameObject = imageSlideShow_buttons_back_Button_gameObject.transform.Find("Text").gameObject;
+		imageSlideShow_buttons_back_text_Other_17_gameObject = imageSlideShow_buttons_back_Button_gameObject.transform.Find("Text").gameObject;
 
 		input_Panel_gameObject = homeMenu1_Panel_gameObject.transform.Find("Panel_Input").gameObject;
 		input_Panel = input_Panel_gameObject.GetComponent<UnityEngine.UI.Image>();
@@ -104,9 +104,9 @@ public class GUI_HomeMenu1 : MonoBehaviour {
 		input_name_InputField_gameObject = input_Panel_gameObject.transform.Find("InputField_Name").gameObject;
 		input_name_InputField = input_name_InputField_gameObject.GetComponent<UnityEngine.UI.InputField>();
 
-		input_name_placeholder_Other_46_gameObject = input_name_InputField_gameObject.transform.Find("Placeholder").gameObject;
+		input_name_placeholder_Other_18_gameObject = input_name_InputField_gameObject.transform.Find("Placeholder").gameObject;
 
-		input_name_text_Other_47_gameObject = input_name_InputField_gameObject.transform.Find("Text").gameObject;
+		input_name_text_Other_19_gameObject = input_name_InputField_gameObject.transform.Find("Text").gameObject;
 
 		input_email_Text_gameObject = input_Panel_gameObject.transform.Find("Text_Email").gameObject;
 		input_email_Text = input_email_Text_gameObject.GetComponent<UnityEngine.UI.Text>();
@@ -114,8 +114,8 @@ public class GUI_HomeMenu1 : MonoBehaviour {
 		input_email_InputField_gameObject = input_Panel_gameObject.transform.Find("InputField_Email").gameObject;
 		input_email_InputField = input_email_InputField_gameObject.GetComponent<UnityEngine.UI.InputField>();
 
-		input_email_placeholder_Other_48_gameObject = input_email_InputField_gameObject.transform.Find("Placeholder").gameObject;
+		input_email_placeholder_Other_20_gameObject = input_email_InputField_gameObject.transform.Find("Placeholder").gameObject;
 
-		input_email_text_Other_49_gameObject = input_email_InputField_gameObject.transform.Find("Text").gameObject;
+		input_email_text_Other_21_gameObject = input_email_InputField_gameObject.transform.Find("Text").gameObject;
 	}
 }
