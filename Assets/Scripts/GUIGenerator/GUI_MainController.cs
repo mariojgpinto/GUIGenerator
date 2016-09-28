@@ -4,12 +4,12 @@ using System.IO;
 using System.Collections;
 
 public class ButtonPressedEventArgs : EventArgs {
-	public int id { get; set; }
+	public string id { get; set; }
 	public string description { get; set; }
 }
 
 public class TogglePressedEventArgs : EventArgs {
-	public int id { get; set; }
+	public string id { get; set; }
 	public string description { get; set; }
 
 	public bool value { get; set; }
@@ -19,45 +19,43 @@ public class GUI_MainController : MonoBehaviour {
 	#region VARIABLES
 	public static GUI_MainController instance;
 
-	public GameObject gui_HomeMenu1;
 	public GameObject gui_HomeMenu2;
-
-	public static event EventHandler<ButtonPressedEventArgs> GUI_HomeMenu1_ButtonPressed;
+	public GameObject gui_HomeMenu1;
 
 	public static event EventHandler<ButtonPressedEventArgs> GUI_HomeMenu2_ButtonPressed;
-	public static event EventHandler<TogglePressedEventArgs> GUI_HomeMenu2_TogglePressed;
+
+	public static event EventHandler<ButtonPressedEventArgs> GUI_HomeMenu1_ButtonPressed;
 
 	#endregion
 
 	#region SETUP
 	void FindGameObjects(){
-		gui_HomeMenu1 = GameObject.Find("Panel_HomeMenu1");
 		gui_HomeMenu2 = GameObject.Find("Panel_HomeMenu2");
+		gui_HomeMenu1 = GameObject.Find("Panel_HomeMenu1");
 	}
 
 	void InitializeClasses(){
-		gui_HomeMenu1.GetComponent<RectTransform>().localPosition = Vector3.zero;
 		gui_HomeMenu2.GetComponent<RectTransform>().localPosition = Vector3.zero;
+		gui_HomeMenu1.GetComponent<RectTransform>().localPosition = Vector3.zero;
 
-		GUI_HomeMenu1.UpdateValues(gui_HomeMenu1);
 		GUI_HomeMenu2.UpdateValues(gui_HomeMenu2);
-		gui_HomeMenu1.gameObject.SetActive(true);
-		gui_HomeMenu2.gameObject.SetActive(false);
+		GUI_HomeMenu1.UpdateValues(gui_HomeMenu1);
+		gui_HomeMenu2.gameObject.SetActive(true);
+		gui_HomeMenu1.gameObject.SetActive(false);
 	}
 
 	void InitializeListeners(){
-		GUI_HomeMenu1.imageSlideShow_buttons_next_Button.onClick.AddListener(() => Event_OnButton_HomeMenu1(0));
-		GUI_HomeMenu1.imageSlideShow_buttons_previous_Button.onClick.AddListener(() => Event_OnButton_HomeMenu1(1));
-		GUI_HomeMenu1.imageSlideShow_buttons_back_Button.onClick.AddListener(() => Event_OnButton_HomeMenu1(2));
+		GUI_HomeMenu2.imageSlideShow_buttons_next_Button.onClick.AddListener(() => Event_OnButton_HomeMenu2("imageSlideShow_buttons_next_Button"));
+		GUI_HomeMenu2.imageSlideShow_buttons_previous_Button.onClick.AddListener(() => Event_OnButton_HomeMenu2("imageSlideShow_buttons_previous_Button"));
+		GUI_HomeMenu2.imageSlideShow_buttons_back_Button.onClick.AddListener(() => Event_OnButton_HomeMenu2("imageSlideShow_buttons_back_Button"));
 
-		GUI_HomeMenu2.imageSlideShow_buttons_back_Button.onClick.AddListener(() => Event_OnButton_HomeMenu2(0));
-
-		GUI_HomeMenu2.imageSlideShow_buttons_next_Toggle.onValueChanged.AddListener((bool value) => Event_OnToggle_HomeMenu2(0, value));
-		GUI_HomeMenu2.imageSlideShow_buttons_previous_Toggle.onValueChanged.AddListener((bool value) => Event_OnToggle_HomeMenu2(1, value));
+		GUI_HomeMenu1.imageSlideShow_buttons_next_Button.onClick.AddListener(() => Event_OnButton_HomeMenu1("imageSlideShow_buttons_next_Button"));
+		GUI_HomeMenu1.imageSlideShow_buttons_previous_Button.onClick.AddListener(() => Event_OnButton_HomeMenu1("imageSlideShow_buttons_previous_Button"));
+		GUI_HomeMenu1.imageSlideShow_buttons_back_Button.onClick.AddListener(() => Event_OnButton_HomeMenu1("imageSlideShow_buttons_back_Button"));
 
 	}
 
-	protected static void OnButtonPressed(int id, string desc, EventHandler<ButtonPressedEventArgs> handler){
+	protected static void OnButtonPressed(string id, string desc, EventHandler<ButtonPressedEventArgs> handler){
 		ButtonPressedEventArgs args = new ButtonPressedEventArgs();
 		args.id = id;
 		args.description = desc;
@@ -67,7 +65,7 @@ public class GUI_MainController : MonoBehaviour {
 		}
 	}
 
-	protected static void OnTogglePressed(int id, string desc, bool value, EventHandler<TogglePressedEventArgs> handler){
+	protected static void OnTogglePressed(string id, string desc, bool value, EventHandler<TogglePressedEventArgs> handler){
 		TogglePressedEventArgs args = new TogglePressedEventArgs();
 		args.id = id;
 		args.description = desc;
@@ -81,37 +79,31 @@ public class GUI_MainController : MonoBehaviour {
 	#endregion
 
 	#region CALLBACKS
-	void Event_OnButton_HomeMenu1(int id){
+	void Event_OnButton_HomeMenu2(string id){
 		switch(id){
-			case 0 : //HOMEMENU1 - NEXT
-				OnButtonPressed(id, "HOMEMENU1 - BUTTON NEXT",GUI_HomeMenu1_ButtonPressed);
+			case "imageSlideShow_buttons_next_Button" : //HOMEMENU2 - NEXT
+				OnButtonPressed(id, "HOMEMENU2 - BUTTON NEXT",GUI_HomeMenu2_ButtonPressed);
 				break;
-			case 1 : //HOMEMENU1 - PREVIOUS
-				OnButtonPressed(id, "HOMEMENU1 - BUTTON PREVIOUS",GUI_HomeMenu1_ButtonPressed);
+			case "imageSlideShow_buttons_previous_Button" : //HOMEMENU2 - PREVIOUS
+				OnButtonPressed(id, "HOMEMENU2 - BUTTON PREVIOUS",GUI_HomeMenu2_ButtonPressed);
 				break;
-			case 2 : //HOMEMENU1 - BACK
-				OnButtonPressed(id, "HOMEMENU1 - BUTTON BACK",GUI_HomeMenu1_ButtonPressed);
-				break;
-			default: break;
-		}
-	}
-
-	void Event_OnButton_HomeMenu2(int id){
-		switch(id){
-			case 0 : //HOMEMENU2 - BACK
+			case "imageSlideShow_buttons_back_Button" : //HOMEMENU2 - BACK
 				OnButtonPressed(id, "HOMEMENU2 - BUTTON BACK",GUI_HomeMenu2_ButtonPressed);
 				break;
 			default: break;
 		}
 	}
 
-	void Event_OnToggle_HomeMenu2(int id, bool value){
+	void Event_OnButton_HomeMenu1(string id){
 		switch(id){
-			case 0 : //HOMEMENU2 - NEXT
-				OnTogglePressed(id, "HOMEMENU2 - TOGGLE NEXT", value,GUI_HomeMenu2_TogglePressed);
+			case "imageSlideShow_buttons_next_Button" : //HOMEMENU1 - NEXT
+				OnButtonPressed(id, "HOMEMENU1 - BUTTON NEXT",GUI_HomeMenu1_ButtonPressed);
 				break;
-			case 1 : //HOMEMENU2 - PREVIOUS
-				OnTogglePressed(id, "HOMEMENU2 - TOGGLE PREVIOUS", value,GUI_HomeMenu2_TogglePressed);
+			case "imageSlideShow_buttons_previous_Button" : //HOMEMENU1 - PREVIOUS
+				OnButtonPressed(id, "HOMEMENU1 - BUTTON PREVIOUS",GUI_HomeMenu1_ButtonPressed);
+				break;
+			case "imageSlideShow_buttons_back_Button" : //HOMEMENU1 - BACK
+				OnButtonPressed(id, "HOMEMENU1 - BUTTON BACK",GUI_HomeMenu1_ButtonPressed);
 				break;
 			default: break;
 		}
@@ -121,7 +113,15 @@ public class GUI_MainController : MonoBehaviour {
 
 	#region UNITY_CALLBACKS
 	void Awake(){
-		instance = this;
+		if(instance == null){
+			instance = this;
+		}
+		else{
+			if (instance != this) {
+				Destroy(gameObject);
+				return;
+			}
+		}
 
 		FindGameObjects();
 
@@ -139,27 +139,17 @@ public class GUI_MainController : MonoBehaviour {
 	#endregion
 
 	#region COMMENTS
-//	void OnButton_HomeMenu1(object sender, ButtonPressedEventArgs e){
-//		switch(e.id){
-//			case 0 : //HOMEMENU1 - NEXT
-//				Debug.Log(e.id + " - HOMEMENU1 - BUTTON NEXT");
-
-//				break;
-//			case 1 : //HOMEMENU1 - PREVIOUS
-//				Debug.Log(e.id + " - HOMEMENU1 - BUTTON PREVIOUS");
-
-//				break;
-//			case 2 : //HOMEMENU1 - BACK
-//				Debug.Log(e.id + " - HOMEMENU1 - BUTTON BACK");
-
-//				break;
-//			default: break;
-//		}
-//	}
-
 //	void OnButton_HomeMenu2(object sender, ButtonPressedEventArgs e){
 //		switch(e.id){
-//			case 0 : //HOMEMENU2 - BACK
+//			case "imageSlideShow_buttons_next_Button" : //HOMEMENU2 - NEXT
+//				Debug.Log(e.id + " - HOMEMENU2 - BUTTON NEXT");
+
+//				break;
+//			case "imageSlideShow_buttons_previous_Button" : //HOMEMENU2 - PREVIOUS
+//				Debug.Log(e.id + " - HOMEMENU2 - BUTTON PREVIOUS");
+
+//				break;
+//			case "imageSlideShow_buttons_back_Button" : //HOMEMENU2 - BACK
 //				Debug.Log(e.id + " - HOMEMENU2 - BUTTON BACK");
 
 //				break;
@@ -167,26 +157,18 @@ public class GUI_MainController : MonoBehaviour {
 //		}
 //	}
 
-//	void OnToggle_HomeMenu2(object sender, TogglePressedEventArgs e){
+//	void OnButton_HomeMenu1(object sender, ButtonPressedEventArgs e){
 //		switch(e.id){
-//			case 0 : //HOMEMENU2 - NEXT
-//				Debug.Log(e.id + " - HOMEMENU2 - TOGGLE NEXT (" + e.value + ")");
-//				
-//				if(e.value){
-//					
-//				} else{ 
-//					
-//				}
+//			case "imageSlideShow_buttons_next_Button" : //HOMEMENU1 - NEXT
+//				Debug.Log(e.id + " - HOMEMENU1 - BUTTON NEXT");
 
 //				break;
-//			case 1 : //HOMEMENU2 - PREVIOUS
-//				Debug.Log(e.id + " - HOMEMENU2 - TOGGLE PREVIOUS (" + e.value + ")");
-//				
-//				if(e.value){
-//					
-//				} else{ 
-//					
-//				}
+//			case "imageSlideShow_buttons_previous_Button" : //HOMEMENU1 - PREVIOUS
+//				Debug.Log(e.id + " - HOMEMENU1 - BUTTON PREVIOUS");
+
+//				break;
+//			case "imageSlideShow_buttons_back_Button" : //HOMEMENU1 - BACK
+//				Debug.Log(e.id + " - HOMEMENU1 - BUTTON BACK");
 
 //				break;
 //			default: break;
@@ -194,10 +176,9 @@ public class GUI_MainController : MonoBehaviour {
 //	}
 
 //	void AssignEvents(){
-//		GUI_MainController.GUI_HomeMenu1_ButtonPressed += OnButton_HomeMenu1;
 //		GUI_MainController.GUI_HomeMenu2_ButtonPressed += OnButton_HomeMenu2;
+//		GUI_MainController.GUI_HomeMenu1_ButtonPressed += OnButton_HomeMenu1;
 
-//		GUI_MainController.GUI_HomeMenu2_TogglePressed += OnToggle_HomeMenu2;
 //	}
 	#endregion
 }

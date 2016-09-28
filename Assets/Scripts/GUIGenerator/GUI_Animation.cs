@@ -101,8 +101,7 @@ public class GUI_Animation : MonoBehaviour {
 
 	void SlidePanel_Instance(GameObject panel, Vector3 initialPosition, Vector3 finalPosition, bool removeElement = false)
 	{
-		//StartCoroutine(SlidePanel_Routine(panel, Vector3.zero, new Vector3(0,-Screen.height,0), removeElement));
-		StartCoroutine(SlidePanel_Routine(panel, initialPosition, finalPosition, removeElement));
+		StartCoroutine(SlidePanel_Routine(panel, Vector3.zero, new Vector3(0,-Screen.height,0), removeElement));
 	}
 
 	#endregion

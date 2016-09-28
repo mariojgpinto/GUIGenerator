@@ -100,14 +100,14 @@ public static class GUIGenerator_Macros{
 	public static string text_classEventButtonName = "ButtonPressedEventArgs";
 	public static string text_classEventButton = "" +
 		"public class " + text_classEventButtonName + " : EventArgs {\n" + 
-		"\tpublic int id { get; set; }\n" + 
+		"\tpublic string id { get; set; }\n" + 
 		"\tpublic string description { get; set; }\n" + 
 		"}\n\n";
 
 	public static string text_classEventToggleName = "TogglePressedEventArgs";
 	public static string text_classEventToggle = "" +
 		"public class " + text_classEventToggleName + " : EventArgs {\n" + 
-		"\tpublic int id { get; set; }\n" + 
+		"\tpublic string id { get; set; }\n" + 
 		"\tpublic string description { get; set; }\n\n" + 
 		"\tpublic bool value { get; set; }\n" + 
 		"}\n\n";
@@ -135,7 +135,7 @@ public static class GUIGenerator_Macros{
 
 	public static string text_function_OnButtonPressedName = "OnButtonPressed";
 	public static string text_function_OnButtonPressed = "" + 
-		"\tprotected static void " + text_function_OnButtonPressedName + "(int id, string desc, EventHandler<" + text_classEventButtonName + "> handler){\n" + 
+		"\tprotected static void " + text_function_OnButtonPressedName + "(string id, string desc, EventHandler<" + text_classEventButtonName + "> handler){\n" + 
 		"\t\t" + text_classEventButtonName + " args = new " + text_classEventButtonName + "();\n" + 
 		"\t\targs.id = id;\n" + 		
 		"\t\targs.description = desc;\n\n" + 		
@@ -146,7 +146,7 @@ public static class GUIGenerator_Macros{
 
 	public static string text_function_OnTogglePressedName = "OnTogglePressed";
 	public static string text_function_OnTogglePressed = "" + 
-		"\tprotected static void " + text_function_OnTogglePressedName + "(int id, string desc, bool value, EventHandler<" + text_classEventToggleName + "> handler){\n" + 
+		"\tprotected static void " + text_function_OnTogglePressedName + "(string id, string desc, bool value, EventHandler<" + text_classEventToggleName + "> handler){\n" + 
 			"\t\t" + text_classEventToggleName + " args = new " + text_classEventToggleName + "();\n" + 
 			"\t\targs.id = id;\n" + 	
 			"\t\targs.description = desc;\n\n" + 		
@@ -157,7 +157,7 @@ public static class GUIGenerator_Macros{
 			"\t}\n";
 
 	public static string text_function_OnButtonCallback_Prefix = "Event_OnButton_" + replacement_name + "(" + replacement_variable + ")";
-	public static string text_function_OnButtonCallback_Header = "\tvoid Event_OnButton_" + replacement_name + "(int id){\n";
+	public static string text_function_OnButtonCallback_Header = "\tvoid Event_OnButton_" + replacement_name + "(string id){\n";
 	public static string text_function_OnButtonCallback_Call = text_function_OnButtonPressedName + "(id, \"" + replacement_name + "\"," + replacement_variable + ");";
 	public static string text_function_OnButtonCallback_SwitchInit = "\t\tswitch(id){\n";
 	public static string text_function_OnButtonCallback_Case = 	
@@ -167,7 +167,7 @@ public static class GUIGenerator_Macros{
 	public static string text_function_OnButtonCallback_SwitchEnd = "\t\t\tdefault: break;\n\t\t}\n";
 
 	public static string text_function_OnToggleCallback_Prefix = "Event_OnToggle_" + replacement_name + "("  + replacement_variable + ", value)";
-	public static string text_function_OnToggleCallback_Header = "\tvoid Event_OnToggle_" + replacement_name + "(int id, bool value){\n";
+	public static string text_function_OnToggleCallback_Header = "\tvoid Event_OnToggle_" + replacement_name + "(string id, bool value){\n";
 	public static string text_function_OnToggleCallback_Call = text_function_OnTogglePressedName + "(id, \"" + replacement_name + "\", value," + replacement_variable + ");";
 	public static string text_function_OnToggleCallback_SwitchInit = "\t\tswitch(id){\n";
 	public static string text_function_OnToggleCallback_Case = 	
@@ -214,7 +214,15 @@ public static class GUIGenerator_Macros{
 
 	public static string text_function_ControllerStart_Full = 
 			"\tvoid Awake(){\n" +
-			"\t\tinstance = this;\n\n" + 
+			"\t\tif(instance == null){\n" + 
+			"\t\t\tinstance = this;\n" + 
+			"\t\t}\n" + 
+			"\t\telse{\n" + 
+			"\t\t\tif (instance != this) {\n" + 
+			"\t\t\t\tDestroy(gameObject);\n"  + 
+			"\t\t\t\treturn;\n" + 
+			"\t\t\t}\n" + 
+			"\t\t}\n\n" + 
 			"\t\tFindGameObjects();\n\n" + 
 			"\t\tInitializeClasses();\n" + 
 			"\t\tInitializeListeners();\n" + 
