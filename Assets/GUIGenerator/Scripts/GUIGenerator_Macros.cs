@@ -94,23 +94,27 @@ public static class GUIGenerator_Macros{
 
 	#endregion
 
-	#region FILE_CONTROLLER
-	public static string file_controller = "MainController";
+	#region FILE_CLASSES
+	public static string file_classes = "Classes";
 
 	public static string text_classEventButtonName = "ButtonPressedEventArgs";
 	public static string text_classEventButton = "" +
-		"public class " + text_classEventButtonName + " : EventArgs {\n" + 
-		"\tpublic string id { get; set; }\n" + 
-		"\tpublic string description { get; set; }\n" + 
+		"public class " + text_classEventButtonName + " : EventArgs {\n" +
+		"\tpublic string id { get; set; }\n" +
+		"\tpublic string description { get; set; }\n" +
 		"}\n\n";
 
 	public static string text_classEventToggleName = "TogglePressedEventArgs";
 	public static string text_classEventToggle = "" +
-		"public class " + text_classEventToggleName + " : EventArgs {\n" + 
-		"\tpublic string id { get; set; }\n" + 
-		"\tpublic string description { get; set; }\n\n" + 
-		"\tpublic bool value { get; set; }\n" + 
+		"public class " + text_classEventToggleName + " : EventArgs {\n" +
+		"\tpublic string id { get; set; }\n" +
+		"\tpublic string description { get; set; }\n\n" +
+		"\tpublic bool value { get; set; }\n" +
 		"}\n\n";
+	#endregion
+
+	#region FILE_CONTROLLER
+	public static string file_controller = "Controller";
 
 	public static string text_gameObjectVariable = "\tpublic GameObject " + replacement_name + ";\n";
 
@@ -140,7 +144,7 @@ public static class GUIGenerator_Macros{
 		"\t\targs.id = id;\n" + 		
 		"\t\targs.description = desc;\n\n" + 		
 		"\t\tif(handler != null){\n" + 
-		"\t\t\thandler(" + text_classPrefix + file_controller + ".instance, args);\n" + 
+		"\t\t\thandler(" + replacement_variable + ".instance, args);\n" + 
 		"\t\t}\n" + 
 		"\t}\n";
 
@@ -152,7 +156,7 @@ public static class GUIGenerator_Macros{
 			"\t\targs.description = desc;\n\n" + 		
 			"\t\targs.value = value;\n\n" + 
 			"\t\tif(handler != null){\n" + 
-			"\t\t\thandler(" + text_classPrefix + file_controller + ".instance, args);\n" + 
+			"\t\t\thandler(" + replacement_variable + ".instance, args);\n" + 
 			"\t\t}\n" + 
 			"\t}\n";
 
@@ -206,8 +210,8 @@ public static class GUIGenerator_Macros{
 	public static string text_comment_OnToggleCallback_SwitchEnd = "//\t\t\tdefault: break;\n//\t\t}\n";
 
 	public static string text_comment_AssignEvents_Header = "//\tvoid AssignEvents(){\n";
-	public static string text_comment_OnButtonCallback_Assign = "//\t\t" + text_classPrefix + file_controller + "." + replacement_variable + " += OnButton_" + replacement_name + ";\n";
-	public static string text_comment_OnToggleCallback_Assign = "//\t\t" + text_classPrefix + file_controller + "." + replacement_variable + " += OnToggle_" + replacement_name + ";\n";
+	public static string text_comment_OnButtonCallback_Assign = "//\t\t" + replacement_variable + "." + replacement_variable2 + " += OnButton_" + replacement_name + ";\n";
+	public static string text_comment_OnToggleCallback_Assign = "//\t\t" + replacement_variable + "." + replacement_variable2 + " += OnToggle_" + replacement_name + ";\n";
 	public static string text_comment_AssignEvents_End = "//\t}\n";
 
 
@@ -238,7 +242,7 @@ public static class GUIGenerator_Macros{
 	public static string file_animation = "Animation";
 
 	public static string text_variableAnimationInstance = "\tpublic static " + replacement_variable + " instance;\n";
-	public static string text_variableAnimationTime = "\tpublic static float animationTime = .25f;\n";
+	//public static string text_variableAnimationTime = "\tpublic static float animationTime = .25f;\n";
 
 	public static string text_regionMacro_AnimationShowHide = "SHOW_HIDE";
 	public static string text_function_ShowMenu = 	"\tpublic static void ShowMenu(GameObject panel)\n" +
@@ -254,9 +258,11 @@ public static class GUIGenerator_Macros{
 													"\t}\n";
 
 	public static string text_regionMacro_AnimationSlide = "SLIDE";
-	public static string text_functionSideBase = 	"\tpublic static IEnumerator SlidePanel_Routine(GameObject panel, Vector3 initialPosition, Vector3 finalPosition, bool removeElement = false)\n" +
+	public static string text_functionSideBase = "\tpublic static IEnumerator SlidePanel_Routine(GameObject panel, Vector3 initialPosition, Vector3 finalPosition, float animationTime = .25f, float delayTime = 0f, bool removeElement = false)\n" +
 													"\t{\n" +
-													"\t\tfloat progress = 0; \n\n" +
+													"\t\tfloat progress = 0;\n\n" +
+													"\t\tif(delayTime>0)\n" + 
+													"\t\t\tyield return new WaitForSeconds(delayTime);\n\n" +
 													"\t\tif(!removeElement){\n\t\t\tpanel.SetActive(true);\n\t\t}\n\n" + 
 													"\t\tRectTransform panelPos = panel.GetComponent<RectTransform>();\n\n" +
 													"\t\tVector3 deltaPosition = finalPosition - initialPosition;\n" +
@@ -272,60 +278,60 @@ public static class GUIGenerator_Macros{
 													"\t\tyield break;\n" +
 													"\t}\n";
 
-	public static string text_functionSlidePanel	 = 	"\tpublic static void SlidePanel(GameObject panel, Vector3 initialPosition, Vector3 finalPosition, bool removeElement = false)\n" +
+	public static string text_functionSlidePanel	 = "\tpublic static void SlidePanel(GameObject panel, Vector3 initialPosition, Vector3 finalPosition, float animationTime = .25f, float delayTime = 0f, bool removeElement = false)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, initialPosition, finalPosition, removeElement);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, initialPosition, finalPosition, animationTime, delayTime, removeElement);\n" +
 														"\t}\n";
 
-	public static string text_functionSideBringRight = 	"\tpublic static void BringBackFromRight(GameObject panel)\n" +
+	public static string text_functionSideBringRight = "\tpublic static void BringBackFromRight(GameObject panel, float animationTime = .25f, float delayTime = 0f)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, new Vector3(Screen.width,0,0), Vector3.zero);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, new Vector3(Screen.width,0,0), Vector3.zero, animationTime, delayTime);\n" +
 														"\t}\n";
 
-	public static string text_functionSideBringLeft = 	"\tpublic static void BringBackFromLeft(GameObject panel)\n" +
+	public static string text_functionSideBringLeft = "\tpublic static void BringBackFromLeft(GameObject panel, float animationTime = .25f, float delayTime = 0f)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, new Vector3(-Screen.width,0,0), Vector3.zero);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, new Vector3(-Screen.width,0,0), Vector3.zero, animationTime, delayTime);\n" +
 														"\t}\n";
 
-	public static string text_functionSideRemoveRight = "\tpublic static void RemoveToRight(GameObject panel)\n" +
+	public static string text_functionSideRemoveRight = "\tpublic static void RemoveToRight(GameObject panel, float animationTime = .25f, float delayTime = 0f)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, Vector3.zero, new Vector3(Screen.width,0,0), true);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, Vector3.zero, new Vector3(Screen.width,0,0), animationTime, delayTime, true);\n" +
 														"\t}\n";
 
-	public static string text_functionSideRemoveLeft = 	"\tpublic static void RemoveToLeft(GameObject panel)\n" +
+	public static string text_functionSideRemoveLeft = "\tpublic static void RemoveToLeft(GameObject panel, float animationTime = .25f, float delayTime = 0f)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, Vector3.zero, new Vector3(-Screen.width,0,0), true);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, Vector3.zero, new Vector3(-Screen.width,0,0), animationTime, delayTime, true);\n" +
 														"\t}\n";
 
-	public static string text_functionSideBringTop = 	"\tpublic static void BringBackFromTop(GameObject panel)\n" +
+	public static string text_functionSideBringTop = "\tpublic static void BringBackFromTop(GameObject panel, float animationTime = .25f, float delayTime = 0f)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, new Vector3(0,Screen.height,0), Vector3.zero);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, new Vector3(0,Screen.height,0), Vector3.zero, animationTime, delayTime);\n" +
 														"\t}\n";
 	
-	public static string text_functionSideBringBottom = "\tpublic static void BringBackFromBottom(GameObject panel)\n" +
+	public static string text_functionSideBringBottom = "\tpublic static void BringBackFromBottom(GameObject panel, float animationTime = .25f, float delayTime = 0f)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, new Vector3(0,-Screen.height,0), Vector3.zero);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, new Vector3(0,-Screen.height,0), Vector3.zero, animationTime, delayTime);\n" +
 														"\t}\n";
 	
-	public static string text_functionSideRemoveTop = 	"\tpublic static void RemoveToTop(GameObject panel)\n" +
+	public static string text_functionSideRemoveTop = "\tpublic static void RemoveToTop(GameObject panel, float animationTime = .25f, float delayTime = 0f)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, Vector3.zero, new Vector3(0,Screen.height,0), true);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, Vector3.zero, new Vector3(0,Screen.height,0), animationTime, delayTime, true);\n" +
 														"\t}\n";
 	
-	public static string text_functionSideRemoveBottom ="\tpublic static void RemoveToBottom(GameObject panel)\n" +
+	public static string text_functionSideRemoveBottom = "\tpublic static void RemoveToBottom(GameObject panel, float animationTime = .25f, float delayTime = 0f)\n" +
 														"\t{\n" +
-														"\t\tinstance.SlidePanel_Instance(panel, Vector3.zero, new Vector3(0,-Screen.height,0), true);\n" +
+														"\t\tinstance.SlidePanel_Instance(panel, Vector3.zero, new Vector3(0,-Screen.height,0), animationTime, delayTime, true);\n" +
 														"\t}\n";
 
-	public static string text_functionSideBaseInstance ="\tvoid SlidePanel_Instance(GameObject panel, Vector3 initialPosition, Vector3 finalPosition, bool removeElement = false)\n" +
+	public static string text_functionSideBaseInstance = "\tvoid SlidePanel_Instance(GameObject panel, Vector3 initialPosition, Vector3 finalPosition, float animationTime = .25f, float delayTime = 0f, bool removeElement = false)\n" +
 														"\t{\n" +
-														"\t\tStartCoroutine(SlidePanel_Routine(panel, Vector3.zero, new Vector3(0,-Screen.height,0), removeElement));\n" +
+														"\t\tStartCoroutine(SlidePanel_Routine(panel, initialPosition, finalPosition, animationTime, delayTime, removeElement));\n" +
 														"\t}\n";
 
 	public static string text_functionAnimationAwake = "\tvoid Awake()\n" +
 														"\t{\n" +
 														"\t\t" + replacement_variable + ".instance = this;\n" +
-														"\t}\n";	
+														"\t}\n";
 
 
 	#endregion
